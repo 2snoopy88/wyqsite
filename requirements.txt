@@ -1,0 +1,5 @@
+mongoengine
+Django==1.11
+mysqlclient
+Markdown
+Pygments
