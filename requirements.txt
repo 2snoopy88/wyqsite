@@ -3,3 +3,6 @@ Django==1.11
 mysqlclient
 Markdown
 Pygments
+whoosh
+django-haystack
+jieba
