@@ -15,7 +15,6 @@ import os
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
 
@@ -26,7 +25,6 @@ SECRET_KEY = '^-$ma^r3c3)erlbcgl0311l9vpg2u*7_bwpludepbb)$pvi+^c'
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']
-
 
 # Application definition
 
@@ -40,6 +38,7 @@ INSTALLED_APPS = [
     'blog',
     'comments',
     'haystack',
+    'users',
 ]
 
 MIDDLEWARE = [
@@ -72,7 +71,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'wyqsite.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
 
@@ -80,10 +78,10 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'wyq',
-        'USER' :  'root',
-        'PASSWORD'  : 'wyqzdn1213',
-        'HOST'      : '119.23.228.23',
-        'PORT'      : '3306',
+        'USER': 'root',
+        'PASSWORD': 'wyqzdn1213',
+        'HOST': '119.23.228.23',
+        'PORT': '3306',
     }
 }
 
@@ -111,6 +109,10 @@ HAYSTACK_CONNECTIONS = {
         'PATH': os.path.join(BASE_DIR, 'whoosh_index'),
     },
 }
+# 其它设置...
+AUTH_USER_MODEL = 'users.User'
+
+
 HAYSTACK_SEARCH_RESULTS_PER_PAGE = 10
 HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.RealtimeSignalProcessor'
 
@@ -119,7 +121,8 @@ HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.RealtimeSignalProcessor'
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+LANGUAGE_CODE = 'zh-hans'
+TIME_ZONE = 'Asia/Shanghai'
 
 USE_I18N = True
 
@@ -127,9 +130,11 @@ USE_L10N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [os.path.join(BASE_DIR, "static"),]
+STATICFILES_DIRS = [os.path.join(BASE_DIR, "static"), ]
+LOGOUT_REDIRECT_URL = '/'
+LOGIN_REDIRECT_URL = '/'
+LOGIN_URL = '/users/login/'

@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.shortcuts import render, get_object_or_404
 from markdown.extensions.toc import TocExtension
 from django.utils.text import slugify
+from django.contrib.auth.decorators import login_required
 # Create your views here.
 
 from django.http import HttpResponse
@@ -11,7 +12,7 @@ import markdown
 from comments.forms import CommentForm
 from django.views.generic import ListView, DetailView
 from django.db.models import Q
-
+from django.utils.decorators import method_decorator
 
 # 函数视图
 # def index(request):
@@ -179,12 +180,12 @@ class IndexView(ListView):
 #                }
 #     return render(request, 'blog/detail.html', context=context)
 
+
 class PostDetailView(DetailView):
     # 这些属性的含义和 ListView 是一样的
     model = Post
     template_name = 'blog/detail.html'
     context_object_name = 'post'
-
     def get(self, request, *args, **kwargs):
         # 覆写 get 方法的目的是因为每当文章被访问一次，就得将文章阅读量 +1
         # get 方法返回的是一个 HttpResponse 实例
