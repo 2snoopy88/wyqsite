@@ -6,3 +6,4 @@ Pygments
 whoosh
 django-haystack
 jieba
+django-markdownx
