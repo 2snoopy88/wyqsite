@@ -10,5 +10,8 @@ urlpatterns = [
     # url(r'^category/(?P<pk>[0-9]+)/$', views.category, name='category'),
     url(r'^category/(?P<pk>[0-9]+)/$', views.CategoryView.as_view(), name='category'),
     url(r'^tag/(?P<pk>[0-9]+)/$', views.TagView.as_view(), name='tag'),
+    url(r'^create/$', views.create, name='create'),
+    url(r'^create_post/(?P<user_pk>[0-9]+)/$', views.create_post, name='create_post'),
+
 
 ]
