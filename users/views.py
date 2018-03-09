@@ -5,6 +5,7 @@ from django.shortcuts import render
 from django.shortcuts import render, redirect
 from .forms import RegisterForm
 
+
 def register(request):
     # 从 get 或者 post 请求中获取 next 参数值
     # get 请求中，next 通过 url 传递，即 /?next=value
@@ -28,6 +29,7 @@ def register(request):
             else:
                 return redirect('/')
     else:
+
         # 请求不是 POST，表明用户正在访问注册页面，展示一个空的注册表单给用户
         form = RegisterForm()
 

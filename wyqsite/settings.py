@@ -36,10 +36,18 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'blog',
-    'comments',
+
     'haystack',
     'users',
     'markdownx',
+    'crispy_forms',
+    'imagekit',
+    'ckeditor',
+    'ckeditor_uploader',
+    'mptt',
+    'easy_comment',
+    'notifications',
+    'online_status',
 ]
 
 MIDDLEWARE = [
@@ -50,6 +58,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'online_status.middleware.OnlineStatusMiddleware',
 ]
 
 ROOT_URLCONF = 'wyqsite.urls'
@@ -113,7 +122,6 @@ HAYSTACK_CONNECTIONS = {
 # 其它设置...
 AUTH_USER_MODEL = 'users.User'
 
-
 HAYSTACK_SEARCH_RESULTS_PER_PAGE = 10
 HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.RealtimeSignalProcessor'
 
@@ -139,3 +147,50 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, "static"), ]
 LOGOUT_REDIRECT_URL = '/'
 LOGIN_REDIRECT_URL = '/'
 LOGIN_URL = '/users/login/'
+
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media').replace('\\', '/')
+
+COMMENT_ENTRY_MODEL = 'blog.post'  # 格式是 app_name+model_name
+AUTH_USER_MODEL = 'users.user'  # 格式是 app_name+model_name
+
+CKEDITOR_UPLOAD_PATH = 'uploads/'
+CKEDITOR_IMAGE_BACKEND = 'pillow'
+CKEDITOR_CONFIGS = {
+    'default': {
+        # 编辑器的宽高请根据你的页面自行设置
+        'width': '730px',
+        'height': '150px',
+        'image_previewText': ' ',
+        'tabSpaces': 4,
+        'toolbar': 'Custom',
+        'toolbar_Custom': [
+            ['Bold', 'Italic', 'Underline', 'Format', 'RemoveFormat'],
+            ['NumberedList', 'BulletedList'],
+            ['Blockquote', 'CodeSnippet'],
+            ['Image', 'Link', 'Unlink']
+        ],
+        'extraPlugins': ','.join(['codesnippet', 'uploadimage', 'prism', 'widget', 'lineutils', ]),
+    }
+}
+CKEDITOR_ALLOW_NONIMAGE_FILES = False
+# 限制用户查看上传图片的权限， 只能看自己传的图片
+CKEDITOR_RESTRICT_BY_USER = True
+CKEDITOR_RESTRICT_BY_DATE = True
+CKEDITOR_BROWSE_SHOW_DIRS = True
+
+ADMINS = (('Wyq', '904291035@qq.com'),)  # 网站管理员
+
+SEND_NOTIFICATION_EMAIL = True  # 开启邮件通知
+
+# SMTP设置
+
+EMAIL_HOST = 'smpt.qq.com'
+EMAIL_HOST_USER = '904291035@qq.com'
+EMAIL_HOST_PASSWORD = 'lhcyrkptcmjybbaa'
+EMAIL_USE_TLS = False  # 这里必须是 True，否则发送不成功
+EMAIL_PORT = 465
+EMAIL_USE_SSL = True
+USER_ONLINE_TIMEOUT = 600

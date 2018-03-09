@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404,redirect
 from markdown.extensions.toc import TocExtension
 from django.utils.text import slugify
 from django.contrib.auth.decorators import login_required
@@ -10,7 +10,6 @@ from django.shortcuts import render
 from .models import Post, Category, Tag
 from users.models import User
 import markdown
-from comments.forms import CommentForm
 from django.views.generic import ListView, DetailView
 from django.db.models import Q
 from django.utils.decorators import method_decorator
@@ -18,29 +17,33 @@ import json
 import urllib.request as ur
 from datetime import datetime
 from django.http import HttpResponseRedirect
-class Get_biying(object):
+from users.forms import UserProfileForm,UserImgForm
 
-    def get_one_photo(self):
-        url = r'http://cn.bing.com/HPImageArchive.aspx?format=js&idx=0&n=3'
-        headers = {
-            'User-Agent': 'Mozilla / 4.0(compatible;MSIE6.0;Windows NT 5.1)'
-        }
-        request = ur.Request(url, headers=headers)
-        response = ur.urlopen(request)
-        html_byte = response.read()
-        html_string = html_byte.decode('utf-8')
-        # 解析成字典形式,图片保存在images的key中:
-        dict_json = json.loads(html_string)
-        # 得到images的key所包含的图片信息:
-        list_photo = dict_json['images']
-        #       得到list_photo中的第三张图片组成的字典
-        dict_three = list_photo[2]
-        # 得到图片的残缺url
-        url_photo = dict_three['url']
-        # 将图片的残缺url组合成一个完整的url
-        url_photo = r'http://cn.bing.com' + url_photo
-        return url_photo
 
+
+# class Get_biying(object):
+#
+#     def get_one_photo(self):
+#         url = r'http://cn.bing.com/HPImageArchive.aspx?format=js&idx=0&n=3'
+#         headers = {
+#             'User-Agent': 'Mozilla / 4.0(compatible;MSIE6.0;Windows NT 5.1)'
+#         }
+#         request = ur.Request(url, headers=headers)
+#         response = ur.urlopen(request)
+#         html_byte = response.read()
+#         html_string = html_byte.decode('utf-8')
+#         # 解析成字典形式,图片保存在images的key中:
+#         dict_json = json.loads(html_string)
+#         # 得到images的key所包含的图片信息:
+#         list_photo = dict_json['images']
+#         #       得到list_photo中的第三张图片组成的字典
+#         dict_three = list_photo[2]
+#         # 得到图片的残缺url
+#         url_photo = dict_three['url']
+#         # 将图片的残缺url组合成一个完整的url
+#         url_photo = r'http://cn.bing.com' + url_photo
+#         return url_photo
+#
 
 # 函数视图
 # def index(request):
@@ -50,15 +53,16 @@ class Get_biying(object):
 # 类视图
 class IndexView(ListView):
     model = Post
-    template_name = 'blog/index.html'
+    template_name = 'blog/index1.html'
     context_object_name = 'post_list'
     paginate_by = 3
+
     def get(self, request, *args, **kwargs):
-        g = Get_biying()
-        url_photo = g.get_one_photo()
-        request.session['url_photo'] = url_photo
+        # g = Get_biying()
+        # url_photo = g.get_one_photo()
+        # request.session['url_photo'] = url_photo
         response = super(ListView, self).get(request, *args, **kwargs)
-        return  response
+        return response
 
     def get_context_data(self, **kwargs):
         """
@@ -88,7 +92,6 @@ class IndexView(ListView):
 
         # 将分页导航条的模板变量更新到 context 中，注意 pagination_data 方法返回的也是一个字典。
         context.update(pagination_data)
-
 
         # 将更新后的 context 返回，以便 ListView 使用这个字典中的模板变量去渲染模板。
         # 注意此时 context 字典中已有了显示分页导航条所需的数据。
@@ -219,7 +222,7 @@ class IndexView(ListView):
 class PostDetailView(DetailView):
     # 这些属性的含义和 ListView 是一样的
     model = Post
-    template_name = 'blog/detail.html'
+    template_name = 'blog/detail1.html'
     context_object_name = 'post'
 
     def get(self, request, *args, **kwargs):
@@ -252,12 +255,12 @@ class PostDetailView(DetailView):
         # 覆写 get_context_data 的目的是因为除了将 post 传递给模板外（DetailView 已经帮我们完成），
         # 还要把评论表单、post 下的评论列表传递给模板。
         context = super(PostDetailView, self).get_context_data(**kwargs)
-        form = CommentForm()
-        comment_list = self.object.comment_set.all()
-        context.update({
-            'form': form,
-            'comment_list': comment_list
-        })
+        # form = CommentForm()
+        # comment_list = self.object.comment_set.all()
+        # context.update({
+        #     'form': form,
+        #     'comment_list': comment_list
+        # })
 
         return context
 
@@ -271,7 +274,7 @@ class PostDetailView(DetailView):
 
 class ArchivesView(IndexView):
     model = Post
-    template_name = 'blog/index.html'
+    template_name = 'blog/index1.html'
     context_object_name = 'post_list'
 
     def get_queryset(self):
@@ -294,9 +297,9 @@ class CategoryView(IndexView):
         return super(CategoryView, self).get_queryset().filter(category=cate)
 
 
-class TagView(ListView):
+class TagView(IndexView):
     model = Post
-    template_name = 'blog/index.html'
+    template_name = 'blog/index1.html'
     context_object_name = 'post_list'
 
     def get_queryset(self):
@@ -309,29 +312,64 @@ def search(request):
     error_msg = ''
     if not q:
         error_msg = "请输入关键词"
-        return render(request, 'blog/index.html', {'error_msg': error_msg})
+        return render(request, 'blog/index1.html', {'error_msg': error_msg})
     post_list = Post.objects.filter(Q(title__icontains=q) | Q(body__icontains=q))
-    return render(request, 'blog/index.html', {'error_msg': error_msg, 'post_list': post_list})
+    return render(request, 'blog/index1.html', {'error_msg': error_msg, 'post_list': post_list})
 
 
 def create(request):
-    cate_list=Category.objects.all()
-    tag_list=Tag.objects.all()
-    return render(request, 'blog/create.html',context={'cate_list':cate_list,'tag_list':tag_list})
+    cate_list = Category.objects.all()
+    tag_list = Tag.objects.all()
+    return render(request, 'blog/create1.html', context={'cate_list': cate_list, 'tag_list': tag_list})
 
-def create_post(request,user_pk):
-    title=request.GET.get('title',False)
-    body=request.GET.get('my-editormd-markdown-doc',False)
-    cate=request.GET.get('cate',False)
-    category=get_object_or_404(Category,pk=cate)
-    tag=request.GET.getlist('tags',False)
-    tag_list=Tag.objects.filter(pk__in=tag)
-    ct=datetime.now()
-    mt=datetime.now()
+
+def create_post(request, user_pk):
+    title = request.GET.get('title', False)
+    body = request.GET.get('my-editormd-markdown-doc', False)
+    cate = request.GET.get('cate', False)
+    category = get_object_or_404(Category, pk=cate)
+    tag = request.GET.getlist('tags', False)
+    tag_list = Tag.objects.filter(pk__in=tag)
+    ct = datetime.now()
+    mt = datetime.now()
     user = get_object_or_404(User, pk=user_pk)
-    post=Post.objects.create(title=title,body=body,created_time=ct,modified_time=mt,author=user,category=category)
+    post = Post.objects.create(title=title, body=body, created_time=ct, modified_time=mt, author=user,
+                               category=category)
     for t in tag_list:
         post.tags.add(t)
     post.save();
 
     return HttpResponseRedirect('/')
+
+
+def user_profile(request, user_pk):
+    messages = []
+
+
+    # post请求 表明是在修改用户资料
+    if request.method == 'POST':
+        # 使用getattr可以获得一个querydict，里面包含提交的内容
+        # request_dic = getattr(request, 'POST')
+        # print(request_dic)
+        # print(request.FILES)
+
+        form = UserProfileForm(request.POST,instance=request.user)
+        if form.is_valid():
+            form.save()
+            messages.append('资料修改成功！')
+
+
+        # 如果是get请求，则使用user生成表单
+    form = UserProfileForm(instance=request.user)
+    img = UserImgForm(instance=request.user)
+    return render(request, 'blog/profile.html', context={'form': form,'messages': messages, 'img':img})
+
+def user_img(request,user_pk):
+    if request.method=='POST':
+        img=UserImgForm(request.POST,request.FILES,instance=request.user)
+        if img.is_valid():
+            img.save()
+
+    form = UserProfileForm(instance=request.user)
+    img = UserImgForm(instance=request.user)
+    return render(request, 'blog/profile.html', context={'form': form,'img': img})

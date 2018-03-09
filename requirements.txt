@@ -1,4 +1,3 @@
-mongoengine
 Django==1.11
 mysqlclient
 Markdown
@@ -7,3 +6,9 @@ whoosh
 django-haystack
 jieba
 django-markdownx
+django-imagekit
+django-crispy-forms
+pillow
+django-ckeditor
+django-mptt
+django-notifications-hq

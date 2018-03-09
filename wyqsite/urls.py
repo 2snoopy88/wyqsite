@@ -17,13 +17,19 @@ from django.contrib import admin
 from django.conf.urls import url, include
 from blog.feeds import AllPostsRssFeed
 from markdownx import urls as markdownx
+import notifications.urls
+from django.conf.urls.static import static
+from django.conf import settings
+
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'', include('blog.urls')),
-    url(r'', include('comments.urls')),
     url(r'^markdownx/', include(markdownx)),
     url(r'^all/rss/$', AllPostsRssFeed(), name='rss'),
     url(r'^search/', include('haystack.urls')),
     url(r'^users/', include('users.urls')),
     url(r'^users/', include('django.contrib.auth.urls')),
-]
+    url(r'', include('ckeditor_uploader.urls')),
+    url(r'', include('easy_comment.urls')),
+    url(r'^notifications/', include(notifications.urls, namespace='notifications')),
+]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

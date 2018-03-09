@@ -1,0 +1,289 @@
+{% extends 'base1.html' %}
+{% load staticfiles %}
+{% load blog_tags %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Clean Blog - Start Bootstrap Theme</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="{% static 'startbootstrap-clean-blog-master/vendor/bootstrap/css/bootstrap.min.css' %}"
+          rel="stylesheet">
+
+    <!-- Custom fonts for this template -->
+    <link href="{% static 'startbootstrap-clean-blog-master/vendor/font-awesome/css/font-awesome.min.css' %}"
+          rel="stylesheet" type="text/css">
+    <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet'
+          type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800'
+          rel='stylesheet' type='text/css'>
+
+    <!-- Custom styles for this template -->
+    <link href="{% static 'startbootstrap-clean-blog-master/css/clean-blog.min.css' %}" rel="stylesheet">
+    <link rel="shortcut icon" href="{% static 'icon/哈士奇.png' %}" type="image/x-icon" media="screen">
+     <link rel="stylesheet" href="{% static 'blog/css/pagination.css' %}">
+<link rel="stylesheet" href="{% static 'blog/css/custom.css' %}">
+</head>
+
+<body>
+
+<!-- Navigation -->
+<nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+    <div class="container">
+        <a class="navbar-brand" href="index.html">Start Bootstrap</a>
+        <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
+                data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false"
+                aria-label="Toggle navigation">
+            Menu
+            <i class="fa fa-bars"></i>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'blog:index' %}">首页</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="../../static/startbootstrap-clean-blog-master/about.html">关于</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="../../static/startbootstrap-clean-blog-master/post.html">写作</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="../../static/startbootstrap-clean-blog-master/contact.html">联系</a>
+                </li>
+                {% if user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link">{{ user.username }}</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'logout' %}?next={{ request.path }}">注销登录</a>
+                    </li>
+
+
+
+                {% else %}
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'login'%}?next={{ request.path }}">登录</a>
+                    </li>
+
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- Page Header -->
+<header class="masthead"
+        style="background-image: url('{% static 'startbootstrap-clean-blog-master/img/home-bg.jpg' %}')">
+    <div class="overlay"></div>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-md-10 mx-auto">
+                <div class="site-heading">
+                    <h1>Clean Blog</h1>
+                    <span class="subheading">A Blog Theme by Start Bootstrap</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Main Content -->
+<div class="container">
+    <div class="row">
+
+        <div class="col-md-10">
+            {% block main %}
+                {% if error_msg %}
+                    <p>{{ error_msg }}</p>
+                {% endif %}
+                {% for post in post_list %}
+
+                    <div class="post-preview">
+                        <a href="../../static/startbootstrap-clean-blog-master/post.html">
+                            <h2 class="post-title">
+                                    <a href="{{ post.get_absolute_url }}">{{ post.title }}</a>
+                                </h2>
+                            <header class="entry-header">
+
+                                <div class="entry-meta">
+                                    <span class="post-category"><a
+                                            href="{{ post.get_absolute_url }}">分类:{{ post.category.name }}</a></span>
+
+                                    <span class="comments-link"><a
+                                            href="{{ post.get_absolute_url }}">评论:</a></span>
+                                    <span class="views-count"><a
+                                            href="{{ post.get_absolute_url }}">阅读:{{ post.views }}</a></span>
+                                </div>
+                            </header>
+                            <h3 style="font-weight: 300; margin: 0 0 10px;">
+                                {{ post.excerpt }}
+                            </h3>
+                        </a>
+                        <p class="post-meta">Posted by
+                            <a
+                                    href="{{ post.get_absolute_url }}">{{ post.author }}</a>
+                            on {{ post.created_time }}</p>
+                        <hr>
+
+                    </div>
+                {% empty %}
+                    <div class="no-post">暂时还没有发布的文章!</div>
+                {% endfor %}
+                {% if is_paginated %}
+                    <div class="pagination">
+                        {% if first %}
+                            <a href="?page=1">1</a>
+                        {% endif %}
+                        {% if left %}
+                            {% if left_has_more %}
+                                <span>...</span>
+                            {% endif %}
+                            {% for i in left %}
+                                <a href="?page={{ i }}">{{ i }}</a>
+                            {% endfor %}
+                        {% endif %}
+                        <a class="current-page" href="?page={{ page_obj.number }}">{{ page_obj.number }}</a>
+                        {% if right %}
+                            {% for i in right %}
+                                <a href="?page={{ i }}">{{ i }}</a>
+                            {% endfor %}
+                            {% if right_has_more %}
+                                <span>...</span>
+                            {% endif %}
+                        {% endif %}
+                        {% if last %}
+                            <a href="?page={{ paginator.num_pages }}">{{ paginator.num_pages }}</a>
+                        {% endif %}
+                    </div>
+                {% endif %}
+
+            {% endblock main %}
+
+        </div>
+
+        <aside class="col-md-2">
+            {% block toc %}
+            {% endblock toc %}
+            <div class="widget widget-recent-posts">
+                <h3 class="widget-title">最新文章</h3>
+                {% get_recent_posts as recent_post_list %}
+                <ul>
+                    {% for post in recent_post_list %}
+                        <li>
+                            <a href="{{ post.get_absolute_url }}">{{ post.title }}</a>
+                        </li>
+                    {% empty %}
+                        暂无文章
+                    {% endfor %}
+                </ul>
+            </div>
+            <
+            <div class="widget widget-archives">
+                <h3 class="widget-title">归档</h3>
+                {% archives as date_list %}
+                <ul>
+                    {% for date in date_list %}
+                        <li>
+                            <a href="{% url 'blog:archives' date.year date.month %}">{{ date.year }}
+                                年 {{ date.month }} 月</a>
+                        </li>
+                    {% empty %}
+                        暂无归档！
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <div class="widget widget-category">
+                <h3 class="widget-title">分类</h3>
+                {% get_categories as category_list %}
+                <ul>
+                    {% for category in category_list %}
+                        <li>
+                            <a href="{% url 'blog:category' category.pk %}">{{ category.name }} <span
+                                    class="post-count">({{ category.num_posts }})</span></a>
+                        </li>
+                    {% empty %}
+                        暂无分类！
+                    {% endfor %}
+                </ul>
+            </div>
+
+
+            <div class="widget widget-tag-cloud">
+                <h3 class="widget-title">标签云</h3>
+                {% get_tags as tag_list %}
+                <ul>
+                    {% for tag in tag_list %}
+                        <li>
+                            <a href="{% url 'blog:tag' tag.pk %}">{{ tag.name }}</a>
+                        </li>
+                    {% empty %}
+                        暂无标签！
+                    {% endfor %}
+                </ul>
+            </div>
+            <div class="rss">
+                <a href="{% url 'rss' %}"><span class="ion-social-rss-outline"></span> RSS 订阅</a>
+            </div>
+        </aside>
+    </div>
+</div>
+
+<hr>
+
+<!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-md-10 mx-auto">
+                <ul class="list-inline text-center">
+                    <li class="list-inline-item">
+                        <a href="#">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                  </span>
+                        </a>
+                    </li>
+                    <li class="list-inline-item">
+                        <a href="#">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                  </span>
+                        </a>
+                    </li>
+                    <li class="list-inline-item">
+                        <a href="#">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                  </span>
+                        </a>
+                    </li>
+                </ul>
+                <p class="copyright text-muted">Copyright &copy; Your Website 2018</p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- Bootstrap core JavaScript -->
+<script src="{% static '/startbootstrap-clean-blog-master/vendor/jquery/jquery.min.js' %}"></script>
+<script src="{% static '/startbootstrap-clean-blog-master/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+
+<!-- Custom scripts for this template -->
+<script src="{% static '/startbootstrap-clean-blog-master/js/clean-blog.min.js' %}"></script>
+
+</body>
+
+</html>
