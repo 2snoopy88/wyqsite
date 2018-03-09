@@ -65,8 +65,7 @@
                 {% if user.is_authenticated %}
                     <li class="nav-item">
 
-                        <a class="nav-link " style="font-size:16px"
-                           href="{% url 'blog:user_profile' user.pk %}"> <img class="rounded-circle "style="width: 40px;height: 40px" src={{ user.avatar.url }} >欢迎你{{ user.username }}</a>
+                        <a href="{% url 'blog:user_profile' user.pk %}"> <img class="rounded-circle "style="width: 40px;height: 40px" src={{ user.avatar.url }} ></a>
 
                     </li>
                     <li class="nav-item">
@@ -110,7 +109,7 @@
             <div class="row">
                 <div class="col-lg-8 col-md-10 mx-auto">
                     <div class="site-heading">
-                        <h1>2_snoopy BLOG/<h1>
+                        <h1>2_snoopy BLOG</h1>
                         <span class="subheading">记录生活中的点滴</span>
                     </div>
                 </div>
